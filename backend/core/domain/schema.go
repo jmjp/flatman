@@ -20,16 +20,24 @@ type SchemaInfo struct {
 	Namespace string     `json:"namespace"` // Ex: "com.flatman.api"
 }
 
+// RetryPolicy define as configurações de retry de uma requisição
+type RetryPolicy struct {
+	Enabled    bool `json:"enabled"`
+	MaxRetries int  `json:"maxRetries"`
+	DelayMs    int  `json:"delayMs"`
+}
+
 // SavedRequest define uma entrada no arquivo de configuração da coleção (flatman.json)
 type SavedRequest struct {
-	ID       string            `json:"id"`
-	Name     string            `json:"name"`
-	URL      string            `json:"url"`
-	Method   string            `json:"method"`
-	Schema   string            `json:"schema"`   // ID/Path do schema associado
-	RootType string            `json:"rootType"` // Nome da tabela raiz
-	Headers  map[string]string `json:"headers"`
-	Payload  string            `json:"payload"` // Opcional: payload padrão
+	ID          string            `json:"id"`
+	Name        string            `json:"name"`
+	URL         string            `json:"url"`
+	Method      string            `json:"method"`
+	Schema      string            `json:"schema"`   // ID/Path do schema associado
+	RootType    string            `json:"rootType"` // Nome da tabela raiz
+	Headers     map[string]string `json:"headers"`
+	Payload     string            `json:"payload"` // Opcional: payload padrão
+	RetryPolicy *RetryPolicy      `json:"retryPolicy,omitempty"`
 }
 
 // Collection representa o agrupamento de requisições salvas

@@ -29,7 +29,7 @@ function App() {
   const [contextMenu, setContextMenu] = useState<{ x: number, y: number, id: string } | null>(null);
   const [showEnvManager, setShowEnvManager] = useState(false);
   const [showHeaders, setShowHeaders] = useState(false);
-  const [activeRequestTab, setActiveRequestTab] = useState<'payload' | 'headers' | 'scripts'>('payload');
+  const [activeRequestTab, setActiveRequestTab] = useState<'payload' | 'headers' | 'settings'>('payload');
   const [suggestion, setSuggestion] = useState<{ show: boolean, filter: string, targetId: 'url' | 'payload' } | null>(null);
 
   const currentTab = openTabs.find(t => t.id === activeTabId) || null;
@@ -83,13 +83,18 @@ function App() {
         });
       }
 
+      const maxRetries = currentTab.retryEnabled ? (currentTab.maxRetries || 3) : 0;
+      const delayMs = currentTab.retryEnabled ? (currentTab.delayMs || 1000) : 0;
+
       // @ts-ignore
       const result = await ExecuteBinaryRequest(
         currentTab.schemaPath, 
         url, 
         currentTab.method, 
         payload,
-        interpolatedHeaders
+        interpolatedHeaders,
+        maxRetries,
+        delayMs
       );
       
       updateActiveTabData({ 
@@ -157,6 +162,16 @@ function App() {
             {/* REQUEST SETUP BAR (SCHEMA SELECTOR) */}
             <div className="flex-row gap-6 sticky top-0 z-20" style={{ padding: '0.5rem 1.5rem', backgroundColor: 'var(--bg-surface-lowest)', borderBottom: '1px solid var(--border)', backdropFilter: 'blur(20px)' }}>
                 <div className="flex-row gap-4 flex-1">
+                    <div className="flex-row gap-3 p-1.5 rounded-xl bg-white/5 border border-white/10 flex-1">
+                        <input
+                            type="text"
+                            value={currentTab.name}
+                            onChange={(e) => updateActiveTabData({ name: e.target.value })}
+                            className="url-input"
+                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', fontWeight: 'bold', background: 'transparent', border: 'none', flex: 1, color: 'var(--on-surface)' }}
+                            placeholder="Request Name"
+                        />
+                    </div>
                     <div className="flex-row gap-3 p-1.5 rounded-xl bg-primary/5 border border-primary/20 flex-1">
                         <Database size={12} className="text-primary" />
                         <span className="text-tiny font-black uppercase text-primary/80 tracking-widest">Schema:</span>
@@ -283,10 +298,10 @@ function App() {
                     Headers ({Object.keys(currentTab.headers).length})
                   </div>
                   <div 
-                    className={`tab-item ${activeRequestTab === 'scripts' ? 'active' : ''}`}
-                    onClick={() => setActiveRequestTab('scripts')}
+                    className={`tab-item ${activeRequestTab === 'settings' ? 'active' : ''}`}
+                    onClick={() => setActiveRequestTab('settings')}
                   >
-                    Scripts
+                    Settings
                   </div>
                 </div>
 
@@ -340,9 +355,60 @@ function App() {
                     </div>
                   )}
 
-                  {activeRequestTab === 'scripts' && (
-                    <div className="flex-1 grid place-items-center text-dim text-[10px] uppercase font-black tracking-widest opacity-30">
-                       Scripts engine coming soon...
+                  {activeRequestTab === 'settings' && (
+                    <div className="flex-1 p-6 overflow-y-auto terminal-scroll text-on-surface">
+                      <div className="mb-6">
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                          <input
+                            type="checkbox"
+                            checked={currentTab.retryEnabled || false}
+                            onChange={(e) => updateActiveTabData({ retryEnabled: e.target.checked })}
+                          />
+                          <span style={{ fontSize: '13px', fontWeight: 600 }}>Enable Retry Policy</span>
+                        </label>
+                      </div>
+
+                      {currentTab.retryEnabled && (
+                        <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Max Retries</label>
+                            <input
+                              type="number"
+                              value={currentTab.maxRetries || 0}
+                              onChange={(e) => updateActiveTabData({ maxRetries: parseInt(e.target.value) || 0 })}
+                              min={1}
+                              max={10}
+                              style={{
+                                background: 'var(--bg-deep)',
+                                border: '1px solid var(--border)',
+                                padding: '8px 12px',
+                                borderRadius: '6px',
+                                color: 'var(--on-surface)',
+                                width: '120px'
+                              }}
+                            />
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-dim)', textTransform: 'uppercase' }}>Delay (ms)</label>
+                            <input
+                              type="number"
+                              value={currentTab.delayMs || 0}
+                              onChange={(e) => updateActiveTabData({ delayMs: parseInt(e.target.value) || 0 })}
+                              min={0}
+                              step={100}
+                              style={{
+                                background: 'var(--bg-deep)',
+                                border: '1px solid var(--border)',
+                                padding: '8px 12px',
+                                borderRadius: '6px',
+                                color: 'var(--on-surface)',
+                                width: '120px'
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

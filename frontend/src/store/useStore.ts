@@ -19,6 +19,9 @@ export interface TabState {
   collectionName?: string; // Para vínculo com a coleção se for REQUEST
   wsLogs?: { type: 'in' | 'out' | 'info', data: string, time: string }[];
   wsConnected?: boolean;
+  retryEnabled?: boolean;
+  maxRetries?: number;
+  delayMs?: number;
 }
 
 export interface EnvVariable {
@@ -51,7 +54,10 @@ const DEFAULT_TAB_STATE = (id: string, name: string, type: 'SCHEMA' | 'REQUEST' 
   rootType: '',
   executionTime: null,
   wsLogs: [],
-  wsConnected: false
+  wsConnected: false,
+  retryEnabled: false,
+  maxRetries: 3,
+  delayMs: 1000
 });
 
 interface AppState {
@@ -155,7 +161,10 @@ export const useStore = create<AppState>((set, get) => ({
         rootType: req.rootType || '',
         response: '',
         executionTime: null,
-        collectionName
+        collectionName,
+        retryEnabled: req.retryPolicy?.enabled || false,
+        maxRetries: req.retryPolicy?.maxRetries ?? 3,
+        delayMs: req.retryPolicy?.delayMs ?? 1000
       };
       set({ openTabs: [...openTabs, newTab] });
     }
@@ -299,7 +308,13 @@ export const useStore = create<AppState>((set, get) => ({
         headers: tab.headers,
         schema: tab.schemaPath,
         rootType: tab.rootType,
-        name: tab.name
+        name: tab.name,
+        // @ts-ignore
+        retryPolicy: {
+            enabled: tab.retryEnabled,
+            maxRetries: tab.maxRetries,
+            delayMs: tab.delayMs
+        }
     };
 
     const filePath = `${dirPath}/flatman.json`;
@@ -410,23 +425,27 @@ export const useStore = create<AppState>((set, get) => ({
 }));
 
 // Setup Global Listeners
-WailsRuntime.EventsOn("ws:message", (data: string) => {
-    const { updateActiveTabData, activeTabId, openTabs } = useStore.getState();
-    const tab = openTabs.find(t => t.id === activeTabId);
-    if (tab) {
-        updateActiveTabData({
-            wsLogs: [...(tab.wsLogs || []), { type: 'in', data, time: new Date().toLocaleTimeString() }]
-        });
-    }
-});
+try {
+  WailsRuntime.EventsOn("ws:message", (data: string) => {
+      const { updateActiveTabData, activeTabId, openTabs } = useStore.getState();
+      const tab = openTabs.find(t => t.id === activeTabId);
+      if (tab) {
+          updateActiveTabData({
+              wsLogs: [...(tab.wsLogs || []), { type: 'in', data, time: new Date().toLocaleTimeString() }]
+          });
+      }
+  });
 
-WailsRuntime.EventsOn("ws:error", (err: string) => {
-    const { updateActiveTabData, activeTabId, openTabs } = useStore.getState();
-    const tab = openTabs.find(t => t.id === activeTabId);
-    if (tab) {
-        updateActiveTabData({
-            wsConnected: false, 
-            wsLogs: [...(tab.wsLogs || []), { type: 'info', data: `WS ERROR: ${err}`, time: new Date().toLocaleTimeString() }]
-        });
-    }
-});
+  WailsRuntime.EventsOn("ws:error", (err: string) => {
+      const { updateActiveTabData, activeTabId, openTabs } = useStore.getState();
+      const tab = openTabs.find(t => t.id === activeTabId);
+      if (tab) {
+          updateActiveTabData({
+              wsConnected: false,
+              wsLogs: [...(tab.wsLogs || []), { type: 'info', data: `WS ERROR: ${err}`, time: new Date().toLocaleTimeString() }]
+          });
+      }
+  });
+} catch (e) {
+  console.warn("WailsRuntime not available in browser mode");
+}
