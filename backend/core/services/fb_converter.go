@@ -86,12 +86,3 @@ func (c *FBConverter) BinaryToJSON(schemaPath string, binData []byte) (string, e
 	res, err := os.ReadFile(jsonPath)
 	return string(res), err
 }
-
-func (c *FBConverter) listDir(path string) []string {
-	files, _ := os.ReadDir(path)
-	names := make([]string, 0, len(files))
-	for _, f := range files {
-		names = append(names, f.Name())
-	}
-	return names
-}
