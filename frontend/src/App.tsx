@@ -160,40 +160,38 @@ function App() {
         ) : (
           <>
             {/* REQUEST SETUP BAR (SCHEMA SELECTOR) */}
-            <div className="flex-row gap-6 sticky top-0 z-20" style={{ padding: '0.5rem 1.5rem', backgroundColor: 'var(--bg-surface-lowest)', borderBottom: '1px solid var(--border)', backdropFilter: 'blur(20px)' }}>
+            <div className="flex-row gap-4 sticky top-0 z-20" style={{ padding: '0.5rem 1.5rem', backgroundColor: 'var(--bg-surface-lowest)', borderBottom: '1px solid var(--border)' }}>
                 <div className="flex-row gap-4 flex-1">
-                    <div className="flex-row gap-3 p-1.5 rounded-xl bg-white/5 border border-white/10 flex-1">
+                    <div className="flex-row flex-1">
                         <input
                             type="text"
                             value={currentTab.name}
                             onChange={(e) => updateActiveTabData({ name: e.target.value })}
                             className="url-input"
-                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', fontWeight: 'bold', background: 'transparent', border: 'none', flex: 1, color: 'var(--on-surface)' }}
+                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.85rem', fontWeight: 600, background: 'transparent', border: '1px solid transparent', flex: 1, color: 'var(--on-surface)' }}
                             placeholder="Request Name"
                         />
                     </div>
-                    <div className="flex-row gap-3 p-1.5 rounded-xl bg-primary/5 border border-primary/20 flex-1">
-                        <Database size={12} className="text-primary" />
-                        <span className="text-tiny font-black uppercase text-primary/80 tracking-widest">Schema:</span>
+                    <div className="flex-row gap-2">
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 500 }}>Schema:</span>
                         <select 
                             value={currentTab.schemaPath} 
                             onChange={(e) => updateActiveTabData({ schemaPath: e.target.value, rootType: '' })}
                             className="url-input"
-                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.65rem', background: 'var(--bg-deep)', borderRadius: '6px', border: 'none', flex: 1 }}
+                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', background: 'var(--bg-surface-low)', flex: 1 }}
                         >
-                            <option value="">Select a Flatbuffer definition...</option>
+                            <option value="">Select definition...</option>
                             {schemas.map(s => <option key={s.path} value={s.path}>{s.id}</option>)}
                         </select>
                     </div>
 
-                    <div className="flex-row gap-3 p-1.5 rounded-xl bg-secondary/5 border border-secondary/20 flex-1">
-                        <Wand2 size={12} className="text-secondary" />
-                        <span className="text-tiny font-black uppercase text-secondary/80 tracking-widest">Root Type:</span>
+                    <div className="flex-row gap-2">
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 500 }}>Root Type:</span>
                         <select 
                             value={currentTab.rootType} 
                             onChange={(e) => updateActiveTabData({ rootType: e.target.value })}
                             className="url-input"
-                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.65rem', background: 'var(--bg-deep)', borderRadius: '6px', border: 'none', flex: 1 }}
+                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', background: 'var(--bg-surface-low)', flex: 1 }}
                             disabled={!currentSchema}
                         >
                             <option value="">Select Root Type...</option>
@@ -204,80 +202,71 @@ function App() {
             </div>
 
             {/* URL BAR */}
-            <div style={{ padding: '1rem 1.5rem', flexShrink: 0, display: 'flex', gap: '1rem', alignItems: 'center' }}>
-              <div className="url-bar-container" style={{ margin: 0, flex: 1, height: '48px' }}>
-                <select
-                  value={currentTab.method}
-                  onChange={(e) => updateActiveTabData({ method: e.target.value })}
-                  className="method-tag"
-                  style={{ border: 'none' }}
-                >
-                  <option value="GET">GET</option>
-                  <option value="POST">POST</option>
-                  <option value="PUT">PUT</option>
-                  <option value="DELETE">DELETE</option>
-                  <option value="WS">WS</option>
-                </select>
-    
-                <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0 0.5rem', position: 'relative' }}>
-                  <Globe size={14} style={{ color: 'var(--primary)', opacity: 0.4 }} />
-                  <input
-                    type="text"
-                    value={currentTab.url}
-                    onChange={(e) => handleInputChange(e, 'url')}
-                    placeholder="URL (ex: {{baseUrl}}/users)"
-                    className="url-input"
-                    style={{ width: '100%', border: 'none', outline: 'none', fontSize: '0.75rem', fontWeight: 500, background: 'transparent' }}
-                  />
-                  {suggestion?.targetId === 'url' && suggestion.show && (
-                    <div style={{ position: 'absolute', top: '100%', left: '0', marginTop: '4px', zIndex: 3000 }}>
-                      <SuggestionList items={filteredVars} onSelect={applyVariable} />
-                    </div>
-                  )}
-                </div>
-              </div>
+            <div className="url-bar-container">
+              <select
+                value={currentTab.method}
+                onChange={(e) => updateActiveTabData({ method: e.target.value })}
+                className="method-tag"
+              >
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+                <option value="PUT">PUT</option>
+                <option value="DELETE">DELETE</option>
+                <option value="WS">WS</option>
+              </select>
 
-              <div className="flex-row gap-3">
-                {currentTab.method === 'WS' ? (
-                  !currentTab.wsConnected ? (
-                    <button
-                      onClick={connectWS}
-                      className="btn-primary flex-row gap-2"
-                      style={{ background: 'var(--success)', color: 'white' }}
-                    >
-                      <Link size={14} strokeWidth={3} />
-                      Connect WS
-                    </button>
-                  ) : (
-                    <div className="flex-row gap-2">
-                       <button
-                        onClick={sendWS}
-                        className="btn-primary flex-row gap-2"
-                      >
-                        <Play size={14} fill="currentColor" />
-                        Send Frame
-                      </button>
-                      <button
-                        onClick={disconnectWS}
-                        className="btn-secondary flex-row gap-2"
-                        style={{ borderColor: 'var(--error)', color: 'var(--error)', padding: '0.6rem 1.5rem', borderRadius: '8px', border: '1px solid', cursor: 'pointer', fontSize: '11px', fontWeight: 900, background: 'transparent' }}
-                      >
-                        <Link2Off size={14} strokeWidth={3} />
-                        Abort
-                      </button>
-                    </div>
-                  )
-                ) : (
-                  <button 
-                    onClick={handleSend}
-                    disabled={loading || !currentTab.schemaPath || !currentTab.rootType}
-                    className="btn-primary flex-row gap-3 animate-pulse-slow"
-                  >
-                    {loading ? <Zap size={14} className="animate-spin" /> : <Send size={14} strokeWidth={3} />}
-                    <span>Execute Service</span>
-                  </button>
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', position: 'relative' }}>
+                <input
+                  type="text"
+                  value={currentTab.url}
+                  onChange={(e) => handleInputChange(e, 'url')}
+                  placeholder="Enter request URL"
+                  className="url-input"
+                  style={{ width: '100%', border: 'none', outline: 'none', fontSize: '0.85rem', fontWeight: 400, background: 'transparent', padding: '0.5rem 1rem' }}
+                />
+                {suggestion?.targetId === 'url' && suggestion.show && (
+                  <div style={{ position: 'absolute', top: '100%', left: '0', marginTop: '4px', zIndex: 3000 }}>
+                    <SuggestionList items={filteredVars} onSelect={applyVariable} />
+                  </div>
                 )}
               </div>
+
+              {currentTab.method === 'WS' ? (
+                !currentTab.wsConnected ? (
+                  <button
+                    onClick={connectWS}
+                    className="btn-primary"
+                    style={{ margin: '4px', background: '#22c55e', color: 'white' }}
+                  >
+                    Connect WS
+                  </button>
+                ) : (
+                  <div className="flex-row" style={{ margin: '4px', gap: '4px' }}>
+                      <button
+                      onClick={sendWS}
+                      className="btn-primary"
+                    >
+                      Send
+                    </button>
+                    <button
+                      onClick={disconnectWS}
+                      className="btn-secondary"
+                      style={{ borderColor: '#ef4444', color: '#ef4444', padding: '0.5rem 1rem', borderRadius: '4px', border: '1px solid', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600, background: 'transparent' }}
+                    >
+                      Abort
+                    </button>
+                  </div>
+                )
+              ) : (
+                <button
+                  onClick={handleSend}
+                  disabled={loading || !currentTab.schemaPath || !currentTab.rootType}
+                  className="btn-primary"
+                  style={{ margin: '4px' }}
+                >
+                  {loading ? 'Sending...' : 'Send'}
+                </button>
+              )}
             </div>
     
             {/* EDITOR PANEL WITH TABS */}
@@ -308,25 +297,25 @@ function App() {
                 <div className="flex-1 flex flex-col overflow-hidden" style={{ display: 'flex', flexDirection: 'column' }}>
                   {activeRequestTab === 'payload' && (
                     <>
-                      <header className="pane-header" style={{ borderBottom: 'none' }}>
+                      <header className="pane-header" style={{ borderBottom: '1px solid var(--border)' }}>
                         <div className="flex-row gap-2">
-                          <Terminal size={14} style={{ opacity: 0.6 }} />
-                          <span className="text-[10px] uppercase tracking-widest font-black">JSON Payload</span>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>JSON Payload</span>
                         </div>
                         <div className="flex-row gap-4">
                           <button
                             onClick={() => generateTemplate(currentTab.schemaPath, currentTab.rootType)}
                             disabled={!currentTab.schemaPath}
                             style={{
-                              fontSize: '9px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em',
+                              fontSize: '0.75rem', fontWeight: 600,
                               background: 'none', border: 'none',
                               color: currentTab.schemaPath ? 'var(--primary)' : 'var(--text-dim)',
                               cursor: currentTab.schemaPath ? 'pointer' : 'not-allowed',
+                              display: 'flex', alignItems: 'center', gap: '4px'
                             }}
                           >
-                            <Wand2 size={10} /> Generate
+                            <FileCode size={14} /> Generate
                           </button>
-                          <Copy size={12} className="text-dim hover:text-on-surface transition-colors cursor-pointer" />
+                          <Copy size={14} className="text-dim hover:text-on-surface transition-colors cursor-pointer" />
                         </div>
                       </header>
                       <div className="flex-1 relative p-4">
@@ -418,45 +407,41 @@ function App() {
               <div className="pane">
                 <header className="pane-header">
                   <div className="flex-row gap-2">
-                    <Activity size={14} style={{ opacity: 0.6 }} />
-                    <span className="text-[10px] uppercase tracking-widest font-black">Response</span>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>Response</span>
                   </div>
                   <div className="flex-row gap-4">
                     {currentTab.response && !loading && (
-                      <div style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-dim)', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '1rem', display: 'flex', gap: '1rem' }}>
-                        <span style={{ color: '#4ade80' }}>200 OK</span>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', borderLeft: '1px solid var(--border)', paddingLeft: '1rem', display: 'flex', gap: '1rem' }}>
+                        <span style={{ color: '#22c55e' }}>200 OK</span>
                         <span>{currentTab.executionTime}ms</span>
                       </div>
                     )}
-                    <Copy size={12} className="text-dim cursor-pointer" />
+                    <Copy size={14} className="text-dim cursor-pointer" />
                   </div>
                 </header>
-                <div className="flex-1 p-6 overflow-auto terminal-scroll">
+                <div className="flex-1 p-4 overflow-auto terminal-scroll">
                   <pre style={{ 
                       fontSize: '13px', fontFamily: 'var(--font-mono)', lineHeight: 1.6, 
-                      color: currentTab.response?.startsWith('Error') ? '#f87171' : 'var(--primary)', 
-                      whiteSpace: 'pre-wrap', opacity: 0.9 
+                      color: currentTab.response?.startsWith('Error') ? '#ef4444' : 'var(--on-surface)',
+                      whiteSpace: 'pre-wrap'
                    }}>
-                    {currentTab.response || '// Output will appear here...'}
+                    {currentTab.response || 'No response available.'}
                   </pre>
                 </div>
               </div>
             </div>
 
             {/* STATUS FOOTER */}
-            <div style={{ height: '36px', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'rgba(0,0,0,0.2)', borderTop: '1px solid var(--border)' }}>
+            <div style={{ height: '32px', padding: '0 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'var(--bg-surface-lowest)', borderTop: '1px solid var(--border)' }}>
               <div className="flex-row gap-6">
-                <div className="flex-row gap-2 text-xs uppercase tracking-widest text-dim" style={{ fontWeight: 800 }}>
-                  <Database size={10} />
-                  Schema: <span style={{ color: 'var(--primary)' }}>{currentTab.schemaPath || 'none'}</span>
+                <div className="flex-row gap-2 text-xs text-dim" style={{ fontWeight: 500 }}>
+                  <Database size={12} />
+                  <span>{currentTab.schemaPath || 'No schema'}</span>
                 </div>
-                <div className="flex-row gap-2 text-xs uppercase tracking-widest text-dim" style={{ fontWeight: 800 }}>
-                  <Activity size={10} />
-                  Type: <span style={{ color: 'var(--secondary)' }}>{currentTab.rootType || 'unspecified'}</span>
+                <div className="flex-row gap-2 text-xs text-dim" style={{ fontWeight: 500 }}>
+                  <Activity size={12} />
+                  <span>{currentTab.rootType || 'No root type'}</span>
                 </div>
-              </div>
-              <div className="text-xs text-dim" style={{ fontWeight: 800, opacity: 0.3, letterSpacing: '0.1em' }}>
-                FLATMAN ENGINE V2
               </div>
             </div>
           </>
