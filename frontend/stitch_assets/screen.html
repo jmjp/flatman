@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Flatman Kinetic Vault | API Client</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error": "#ffb4ab",
+                    "on-tertiary-fixed-variant": "#004e5e",
+                    "on-error-container": "#ffdad6",
+                    "on-primary-fixed": "#390c00",
+                    "outline": "#a88a81",
+                    "on-tertiary-fixed": "#001f27",
+                    "on-error": "#690005",
+                    "tertiary": "#58d6f6",
+                    "inverse-primary": "#ac3500",
+                    "surface-container-highest": "#353534",
+                    "on-surface-variant": "#e1bfb5",
+                    "error-container": "#93000a",
+                    "tertiary-fixed-dim": "#58d6f6",
+                    "tertiary-fixed": "#b0ecff",
+                    "on-tertiary": "#003641",
+                    "primary-fixed-dim": "#ffb59d",
+                    "on-secondary": "#303030",
+                    "secondary-fixed": "#e5e2e1",
+                    "inverse-surface": "#e5e2e1",
+                    "background": "#131313",
+                    "on-primary": "#5d1900",
+                    "on-secondary-container": "#b7b5b4",
+                    "surface-container-low": "#1c1b1b",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-container": "#201f1f",
+                    "on-background": "#e5e2e1",
+                    "outline-variant": "#594139",
+                    "surface-dim": "#131313",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "surface": "#131313",
+                    "secondary": "#c8c6c5",
+                    "on-secondary-fixed-variant": "#474746",
+                    "surface-tint": "#ffb59d",
+                    "primary-container": "#ff6c37",
+                    "surface-variant": "#353534",
+                    "primary-fixed": "#ffdbd0",
+                    "on-tertiary-container": "#003743",
+                    "surface-bright": "#3a3939",
+                    "inverse-on-surface": "#313030",
+                    "tertiary-container": "#00a8c7",
+                    "on-primary-container": "#5f1a00",
+                    "primary": "#ffb59d",
+                    "secondary-container": "#474746",
+                    "on-surface": "#e5e2e1",
+                    "on-primary-fixed-variant": "#832600"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #131313;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 10px;
+        }
+        .glass-panel {
+            background: rgba(53, 53, 52, 0.6);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body overflow-hidden h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="flex justify-between items-center w-full px-6 h-14 bg-[#131313] z-50">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black tracking-[0.1rem] text-[#e5e2e1] uppercase font-headline">Flatman</span>
+<div class="flex items-center gap-4 text-sm font-medium">
+<button class="text-[#FF6C37] font-bold px-2 py-1 transition-all duration-200 ease-in-out">My Workspace</button>
+<button class="text-[#e5e2e1]/60 hover:text-[#e5e2e1] px-2 py-1 transition-all duration-200 ease-in-out">Collections</button>
+<button class="text-[#e5e2e1]/60 hover:text-[#e5e2e1] px-2 py-1 transition-all duration-200 ease-in-out">API Network</button>
+</div>
+</div>
+<div class="flex-1 max-w-xl mx-8">
+<div class="relative flex items-center bg-surface-container-lowest rounded-lg border border-outline-variant/15 px-3 py-1.5">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-xs w-full text-on-surface ml-2" placeholder="Search Flatman" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#e5e2e1]/60 hover:text-[#e5e2e1] transition-all duration-200">notifications</button>
+<button class="material-symbols-outlined text-[#e5e2e1]/60 hover:text-[#e5e2e1] transition-all duration-200">settings</button>
+<button class="material-symbols-outlined text-[#e5e2e1]/60 hover:text-[#e5e2e1] transition-all duration-200">help</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30">
+<img alt="User Profile" data-alt="close-up portrait of a professional male developer with clean glasses and a focused expression in a dark office environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrP-mvqoT34Boo_6tseQqeSK9ro_txXRnJ3m4htNwKDwYqU3hR9EzARbLmBaI87W3pDVk5Z1V4JrCminFDNpYifE09tYTXB-d8TUYg0YfejXymzygnCaPIxc2DT7Nt2X9nV2MhYfS0rvEtpKdSLltusDbFYCJH4B9J9ggjk9-Z-E90-YyzL5U_aPPWNhrbg4DoLqi6CkMIo9e_D8U3ZfWBMHqQb4PBJT0JJVRB_LRD9kQLqdIwsGa_ePsyrB2SrKXxsyqBTV71hw"/>
+</div>
+</div>
+</nav>
+<div class="flex flex-1 overflow-hidden">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-14 bottom-0 flex flex-col py-4 bg-[#1c1b1b] w-64 z-40">
+<div class="px-4 mb-6">
+<div class="flex items-center gap-3 p-2 rounded-lg bg-surface-container-high transition-colors duration-200 cursor-pointer">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary-container font-bold">M</div>
+<div class="flex flex-col">
+<span class="text-[0.6875rem] font-bold tracking-[0.1rem] uppercase text-on-surface">Main Workspace</span>
+<span class="text-[0.6rem] text-on-surface-variant/60 uppercase tracking-tighter">Engineering Team</span>
+</div>
+</div>
+</div>
+<div class="px-2 space-y-1 mb-8">
+<button class="w-full flex items-center gap-3 px-3 py-2.5 bg-[#2a2a2a] text-[#FF6C37] border-l-2 border-[#FF6C37] text-[0.6875rem] font-medium tracking-[0.1rem] uppercase transition-colors duration-200">
+<span class="material-symbols-outlined text-lg">folder</span>
+                    Collections
+                </button>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 text-[#e5e2e1]/50 hover:bg-[#2a2a2a]/50 text-[0.6875rem] font-medium tracking-[0.1rem] uppercase transition-colors duration-200">
+<span class="material-symbols-outlined text-lg">database</span>
+                    Schemas
+                </button>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 text-[#e5e2e1]/50 hover:bg-[#2a2a2a]/50 text-[0.6875rem] font-medium tracking-[0.1rem] uppercase transition-colors duration-200">
+<span class="material-symbols-outlined text-lg">table_chart</span>
+                    Tables
+                </button>
+<button class="w-full flex items-center gap-3 px-3 py-2.5 text-[#e5e2e1]/50 hover:bg-[#2a2a2a]/50 text-[0.6875rem] font-medium tracking-[0.1rem] uppercase transition-colors duration-200">
+<span class="material-symbols-outlined text-lg">history</span>
+                    History
+                </button>
+</div>
+<div class="flex-1 overflow-y-auto px-4 custom-scrollbar">
+<div class="flex items-center justify-between text-[0.6rem] text-on-surface-variant uppercase tracking-widest mb-4 px-2">
+<span>Active Collections</span>
+<span class="material-symbols-outlined text-xs">add</span>
+</div>
+<div class="space-y-4">
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-xs font-semibold px-2">
+<span class="material-symbols-outlined text-xs">keyboard_arrow_down</span>
+<span>Core Auth API</span>
+</div>
+<div class="ml-4 pl-4 border-l border-outline-variant/20 space-y-2">
+<div class="flex items-center justify-between group cursor-pointer">
+<div class="flex items-center gap-2">
+<span class="text-[0.5rem] font-black text-tertiary-container">POST</span>
+<span class="text-[0.7rem] text-on-surface-variant group-hover:text-on-surface">Login User</span>
+</div>
+</div>
+<div class="flex items-center justify-between group cursor-pointer bg-surface-container-highest/40 -ml-4 pl-4 py-1 border-l-2 border-primary-container">
+<div class="flex items-center gap-2">
+<span class="text-[0.5rem] font-black text-tertiary-container">GET</span>
+<span class="text-[0.7rem] text-on-surface">Validate Token</span>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-2 text-xs font-semibold px-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-xs">keyboard_arrow_right</span>
+<span>Payment Gateway</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto border-t border-outline-variant/15 p-4 space-y-4">
+<button class="w-full py-2 bg-surface-container-high rounded border border-outline-variant/20 text-[0.6875rem] font-bold uppercase tracking-widest text-[#FF6C37] hover:bg-surface-container-highest transition-colors">
+                    New Request
+                </button>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3 px-2 py-1 text-on-surface-variant hover:text-on-surface cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span class="text-[0.6875rem] font-medium tracking-[0.1rem] uppercase">Settings</span>
+</div>
+<div class="flex items-center gap-3 px-2 py-1 text-on-surface-variant hover:text-on-surface cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+<span class="text-[0.6875rem] font-medium tracking-[0.1rem] uppercase">Trash</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 bg-surface flex flex-col h-full relative">
+<!-- Tabs -->
+<div class="flex items-end bg-surface-container-low px-4 h-11 space-x-1">
+<div class="flex items-center gap-2 px-4 h-9 bg-surface relative rounded-t border-t-2 border-primary-container shadow-[0_-4px_4px_rgba(255,108,55,0.05)]">
+<span class="text-[0.5rem] font-black text-tertiary-container">GET</span>
+<span class="text-[0.7rem] font-medium text-on-surface">Validate Token</span>
+<span class="material-symbols-outlined text-[14px] ml-2 text-on-surface-variant/40 hover:text-on-surface cursor-pointer">close</span>
+</div>
+<div class="flex items-center gap-2 px-4 h-9 bg-surface-container-low text-on-surface-variant/60 hover:bg-surface-container/50 cursor-pointer rounded-t transition-colors">
+<span class="text-[0.5rem] font-black text-primary-fixed-dim opacity-50">POST</span>
+<span class="text-[0.7rem] font-medium">Create Customer</span>
+<span class="material-symbols-outlined text-[14px] ml-2 opacity-0 group-hover:opacity-100">close</span>
+</div>
+<div class="px-3 h-9 flex items-center justify-center text-on-surface-variant/40 hover:text-on-surface cursor-pointer">
+<span class="material-symbols-outlined text-lg">add</span>
+</div>
+</div>
+<div class="flex-1 overflow-hidden flex flex-col p-6 space-y-6">
+<!-- URL Bar Area -->
+<div class="flex gap-2">
+<div class="flex flex-1 items-center bg-surface-container-lowest border border-outline-variant/15 rounded group focus-within:border-primary-container/30 transition-all">
+<div class="px-4 py-2 border-r border-outline-variant/15 bg-surface-container-high/50 text-tertiary-container font-black text-[0.6875rem] uppercase flex items-center gap-2 cursor-pointer">
+                            GET
+                            <span class="material-symbols-outlined text-xs">expand_more</span>
+</div>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-sm font-body text-on-surface px-4" placeholder="Enter Request URL" type="text" value="https://api.flatman.io/v1/auth/validate-token"/>
+</div>
+<button class="bg-gradient-to-br from-primary-container to-[#ffb59d] text-on-primary-container font-bold text-[0.6875rem] uppercase px-8 rounded hover:brightness-110 transition-all flex items-center gap-2">
+                        Execute
+                    </button>
+<button class="bg-surface-container-high px-4 rounded border border-outline-variant/20 hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-lg">save</span>
+</button>
+</div>
+<!-- Params/Headers/Body Toggle -->
+<div class="flex gap-6 border-b border-outline-variant/15">
+<button class="pb-2 text-[0.6875rem] font-bold uppercase tracking-widest text-[#FF6C37] border-b-2 border-[#FF6C37]">Body</button>
+<button class="pb-2 text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant/50 hover:text-on-surface transition-colors">Headers (12)</button>
+<button class="pb-2 text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant/50 hover:text-on-surface transition-colors">Params</button>
+<button class="pb-2 text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant/50 hover:text-on-surface transition-colors">Auth</button>
+<button class="pb-2 text-[0.6875rem] font-bold uppercase tracking-widest text-on-surface-variant/50 hover:text-on-surface transition-colors">Tests</button>
+</div>
+<!-- Panels Split -->
+<div class="flex-1 grid grid-cols-2 gap-6 overflow-hidden">
+<!-- JSON Input (Code Editor Style) -->
+<div class="flex flex-col bg-surface-container-lowest rounded overflow-hidden border border-outline-variant/15">
+<div class="flex items-center justify-between px-4 py-2 bg-surface-container-high/30 border-b border-outline-variant/10">
+<span class="text-[0.6rem] font-bold uppercase tracking-widest text-on-surface-variant">Request Body (JSON)</span>
+<div class="flex gap-3">
+<span class="text-[0.6rem] font-bold uppercase text-[#FF6C37] cursor-pointer">Beautify</span>
+<span class="material-symbols-outlined text-sm cursor-pointer hover:text-white">content_copy</span>
+</div>
+</div>
+<div class="flex-1 p-6 font-mono text-[0.8rem] text-tertiary leading-relaxed overflow-y-auto custom-scrollbar">
+<div class="flex gap-4">
+<div class="text-on-surface-variant/30 select-none text-right w-6">
+                                    1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8
+                                </div>
+<div>
+<span class="text-on-surface">{</span><br/>
+<span class="ml-4 text-on-surface">"token": </span> <span class="text-primary-fixed-dim">"fk_vlt_92kLp7m1Xq_8832"</span><span class="text-on-surface">,</span><br/>
+<span class="ml-4 text-on-surface">"environment": </span> <span class="text-primary-fixed-dim">"production"</span><span class="text-on-surface">,</span><br/>
+<span class="ml-4 text-on-surface">"grant_type": </span> <span class="text-primary-fixed-dim">"vault_access"</span><span class="text-on-surface">,</span><br/>
+<span class="ml-4 text-on-surface">"security_context": </span> <span class="text-on-surface">{</span><br/>
+<span class="ml-8 text-on-surface">"mfa_bypass": </span> <span class="text-tertiary-container">false</span><span class="text-on-surface">,</span><br/>
+<span class="ml-8 text-on-surface">"ip_restricted": </span> <span class="text-tertiary-container">true</span><br/>
+<span class="ml-4 text-on-surface">}</span><br/>
+<span class="text-on-surface">}</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Decoded Result -->
+<div class="flex flex-col bg-surface-container rounded overflow-hidden border border-outline-variant/15 relative">
+<div class="flex items-center justify-between px-4 py-2 bg-surface-container-high border-b border-outline-variant/10">
+<div class="flex items-center gap-4">
+<span class="text-[0.6rem] font-bold uppercase tracking-widest text-on-surface-variant">Response</span>
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-tertiary/10 border border-tertiary/20">
+<div class="w-1.5 h-1.5 rounded-full bg-tertiary"></div>
+<span class="text-[0.6rem] font-black text-tertiary uppercase">200 OK</span>
+</div>
+<span class="text-[0.6rem] font-medium text-on-surface-variant/60">42ms</span>
+<span class="text-[0.6rem] font-medium text-on-surface-variant/60">1.2 KB</span>
+</div>
+<div class="flex gap-3 text-on-surface-variant/60">
+<span class="material-symbols-outlined text-sm cursor-pointer hover:text-white">download</span>
+<span class="material-symbols-outlined text-sm cursor-pointer hover:text-white">share</span>
+</div>
+</div>
+<div class="flex-1 p-6 font-mono text-[0.8rem] text-on-surface-variant leading-relaxed overflow-y-auto custom-scrollbar">
+<div class="flex gap-4">
+<div class="text-on-surface-variant/20 select-none text-right w-6">
+                                    1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13
+                                </div>
+<div class="flex-1">
+<span class="text-on-surface">{</span><br/>
+<span class="ml-4 text-on-surface">"status": </span> <span class="text-tertiary-container">"success"</span><span class="text-on-surface">,</span><br/>
+<span class="ml-4 text-on-surface">"data": </span> <span class="text-on-surface">{</span><br/>
+<span class="ml-8 text-on-surface">"user_id": </span> <span class="text-primary-fixed-dim">"usr_9983x"</span><span class="text-on-surface">,</span><br/>
+<span class="ml-8 text-on-surface">"permissions": </span> <span class="text-on-surface">[</span><br/>
+<span class="ml-12 text-primary-fixed-dim">"read:vault"</span><span class="text-on-surface">,</span><br/>
+<span class="ml-12 text-primary-fixed-dim">"write:vault"</span><span class="text-on-surface">,</span><br/>
+<span class="ml-12 text-primary-fixed-dim">"admin:audit"</span><br/>
+<span class="ml-8 text-on-surface">]</span><span class="text-on-surface">,</span><br/>
+<span class="ml-8 text-on-surface">"expires_at": </span> <span class="text-primary-fixed-dim">"2024-12-31T23:59:59Z"</span><br/>
+<span class="ml-4 text-on-surface">}</span><span class="text-on-surface">,</span><br/>
+<span class="ml-4 text-on-surface">"metadata": </span> <span class="text-on-surface">{</span><br/>
+<span class="ml-8 text-on-surface">"server_region": </span> <span class="text-primary-fixed-dim">"us-east-1"</span><br/>
+<span class="ml-4 text-on-surface">}</span><br/>
+<span class="text-on-surface">}</span>
+</div>
+</div>
+</div>
+<!-- Floating Ghost Decoration -->
+<div class="absolute bottom-4 right-4 w-32 h-32 opacity-10 pointer-events-none">
+<img alt="Abstract Pattern" class="w-full h-full object-cover rounded-full mix-blend-screen" data-alt="vibrant 3d geometric abstract shapes with orange and teal gradients floating in deep space against dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8vnF6hIh7DZLZ4eyJdVZjUXILVlJRCVh_MwIegtJ9sASSK_iMjSpVl0Rmylf6e964N1Ekw3wYpwvwnfur7TwzSfRY5kHcvuJ5ZsuCZ3fTLsqGAHYTkm1rIVNPLDmqAbXj70ivmSudv1lKlOCwrWTVwm5ljPyZWlOB67AccAEze81-PxCWtRxM9PKuOcrPNsQz2XdxpUvnWfTXL_hzmNeAstVULNrHAKYCdOXgN1OtP2kPcbEi-zckD9fdU0n95KS3bjE3X1hy9w"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="flex justify-between items-center px-6 py-2 w-full bg-[#0e0e0e] border-t border-[#594139]/15 z-30">
+<div class="flex items-center gap-6">
+<span class="text-[0.6875rem] uppercase tracking-widest text-[#e5e2e1]/40">© 2024 Flatman Kinetic Vault</span>
+<div class="flex gap-4">
+<a class="text-[0.6875rem] uppercase tracking-widest text-[#e5e2e1]/40 hover:text-[#FF6C37] transition-opacity duration-200" href="#">Privacy</a>
+<a class="text-[0.6875rem] uppercase tracking-widest text-[#e5e2e1]/40 hover:text-[#FF6C37] transition-opacity duration-200" href="#">Terms</a>
+<a class="text-[0.6875rem] uppercase tracking-widest text-[#e5e2e1]/40 hover:text-[#FF6C37] transition-opacity duration-200" href="#">API Status</a>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-[0.6rem] font-bold text-[#FF6C37] uppercase tracking-[0.2rem]">Operational</span>
+<div class="w-2 h-2 rounded-full bg-[#FF6C37] animate-pulse shadow-[0_0_8px_#FF6C37]"></div>
+</div>
+</footer>
+</main>
+</div>
+<!-- Floating Action Button (Only on main dashboard) -->
+<div class="fixed bottom-12 right-6 z-50">
+<button class="w-12 h-12 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</body></html>

@@ -1,0 +1,128 @@
+tasks:
+  - id: core-structure
+    title: "Estrutura Base Hexagonal [BE]"
+    description: "Criar árvore de diretórios backend/internal e configurar cmd/api."
+    status: "done"
+    priority: "high"
+    tags: ["BE", "Infra"]
+
+  - id: domain-entities
+    title: "Entidades de Domínio [BE]"
+    description: "Definir structs SchemaInfo e interfaces de portas no core/domain."
+    status: "done"
+    priority: "high"
+    depends_on: ["core-structure"]
+    tags: ["BE", "Domain"]
+
+  - id: fbs-loader
+    title: "Carregamento Dinâmico de .fbs [BE]"
+    description: "Implementar o serviço de leitura de arquivos .fbs e extração de metadados."
+    status: "done"
+    priority: "high"
+    depends_on: ["domain-entities"]
+    tags: ["BE", "Service"]
+
+  - id: fb-serialization
+    title: "Serialização JSON -> Flatbuffers [BE]"
+    description: "Implementar a lógica de conversão via reflexão usando a lib oficial."
+    status: "done"
+    priority: "high"
+    depends_on: ["fbs-loader"]
+    tags: ["BE", "Service"]
+
+  - id: rest-client-binary
+    title: "Cliente REST Binário [BE]"
+    description: "Implementar executor de requisições HTTP que aceita []byte como body."
+    status: "done"
+    priority: "mid"
+    depends_on: ["fb-serialization"]
+    tags: ["BE", "Adapter"]
+
+  - id: design-system-impl
+    title: "Design System Base [FE]"
+    description: "Implementar tokens de cores e CSS utilitários no React."
+    status: "done"
+    priority: "high"
+    tags: ["FE", "UI"]
+
+  - id: sidebar-ui
+    title: "Sidebar de Schemas [FE]"
+    description: "Criar componente de visualização da árvore de schemas carregados."
+    status: "done"
+    priority: "mid"
+    depends_on: ["design-system-impl", "fbs-loader"]
+    tags: ["FE", "UI"]
+
+  - id: request-builder-ui
+    title: "Request Builder UI [FE]"
+    description: "Interface com Editor JSON e seletor de tipos dinâmicos do schema."
+    status: "done"
+    priority: "high"
+    depends_on: ["design-system-impl", "fb-serialization"]
+    tags: ["FE", "UI"]
+
+  - id: response-viewer-ui
+    title: "Response Viewer [FE]"
+    description: "Componente para JSON decodificado e visualizador Hexadecimal."
+    status: "done"
+    priority: "mid"
+    depends_on: ["design-system-impl"]
+    tags: ["FE", "UI"]
+
+  - id: websocket-service
+    title: "WebSocket Bridge [BE/FE]"
+    description: "Implementar suporte a frames binários via connection persistente."
+    status: "done"
+    priority: "low"
+    depends_on: ["fb-serialization"]
+    tags: ["BE", "FE", "WS"]
+
+  - id: env-store-impl
+    title: "Environment Store [FE]"
+    description: "Implementar suporte a múltiplos ambientes e persistência local."
+    status: "done"
+    priority: "high"
+    tags: ["FE", "Store"]
+
+  - id: env-manager-ui
+    title: "Manager de Ambientes [FE]"
+    description: "UI para criar, editar e excluir ambientes/variáveis."
+    status: "done"
+    priority: "high"
+    depends_on: ["env-store-impl"]
+    tags: ["FE", "UI"]
+
+  - id: var-interpolation-logic
+    title: "Interpolação de Variáveis [FE]"
+    description: "Substituir {{key}} na URL e Payload antes do envio."
+    status: "done"
+    priority: "high"
+    depends_on: ["env-store-impl"]
+    tags: ["FE", "Logic"]
+  - id: collection-crud-be
+    title: "CRUD de Coleções [BE]"
+    description: "Implementar persistência de coleções e requests no arquivo flatman.json."
+    status: "done"
+    priority: "high"
+    tags: ["BE", "Service"]
+
+  - id: request-centric-ui
+    title: "Refatoração para Fluxo de Coleções [FE]"
+    description: "Ajustar o Zustand e a Sidebar para focar em Coleções > Requests em vez de apenas Schemas."
+    status: "done"
+    priority: "high"
+    tags: ["FE", "UI"]
+
+  - id: headers-manager-ui
+    title: "Editor de Headers [FE]"
+    description: "Implementar UI para gerenciar headers da requisição (chave-valor) com interpolação."
+    status: "done"
+    priority: "high"
+    tags: ["FE", "UI"]
+
+  - id: schema-selector-logic
+    title: "Seletor de Schema por Request [FE]"
+    description: "Permitir selecionar qual FBS usar para cada endpoint em vez de ser 1:1."
+    status: "done"
+    priority: "high"
+    tags: ["FE", "Logic"]

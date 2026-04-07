@@ -1,0 +1,63 @@
+name: "Flatman"
+description: "Um cliente de teste API desktop focado em Flatbuffers, permitindo o envio de requisições REST e WebSocket com serialização dinâmica."
+approved: false
+
+features:
+  - id: dynamic_schema_loading
+    title: "Carregamento Dinâmico de Schemas"
+    description: "Permitir que o usuário selecione uma pasta contendo arquivos .fbs e carregue os schemas para uso imediato no app."
+    priority: "high"
+
+  - id: request_builder_rest
+    title: "Request Builder (REST)"
+    description: "Interface para definir URL, Headers e Body. O corpo será editado em JSON e serializado para Flatbuffers via backend Go."
+    priority: "high"
+
+  - id: environment_variables
+    title: "Ambientes e Variáveis de Ambiente"
+    description: "Sistema para definir múltiplos ambientes (ex: Local, Prod) e variáveis (ex: {{baseUrl}}) que podem ser usadas na URL e no Payload."
+    priority: "high"
+
+  - id: dynamic_payload_generation
+    title: "Geração Dinâmica de Payload"
+    description: "Botão para gerar um template JSON baseado nos tipos e campos extraídos do arquivo .fbs."
+    priority: "mid"
+
+  - id: websocket_tester
+    title: "WebSocket Tester"
+    description: "Aba para conexões WebSocket ativas, permitindo envio de frames binários e visualização de mensagens recebidas decodificadas."
+    priority: "mid"
+
+  - id: go_flatbuffers_bridge
+    title: "Bridge de Reflexão Go-Frontend"
+    description: "Lógica pesada de reflexão e serialização Flatbuffers no Go, expondo funções para o frontend via Wails."
+    priority: "mid"
+
+user_flows:
+  - title: "Fluxo de Envio de Requisição REST"
+    steps:
+      - "Usuário carrega schema .fbs."
+      - "Usuário preenche dados em formulário JSON."
+      - "Frontend envia JSON para o backend."
+      - "Backend serializa para binário."
+      - "Backend envia requisição binária e retorna resposta decodificada para o frontend."
+
+  - title: "Fluxo de Configuração de Ambiente"
+    steps:
+      - "Usuário cria um ambiente (ex: Staging)."
+      - "Usuário define chaves e valores (ex: host -> http://1.2.3.4)."
+      - "Usuário seleciona o ambiente ativo em um dropdown."
+      - "Ao enviar a requisição, as chaves {{host}} na URL/Payload são substituídas pelos valores do ambiente ativo."
+
+technical_constraints:
+  - "Go 1.26 no Backend."
+  - "Wails v2 para o framework desktop."
+  - "React + TypeScript + Zustand no Frontend."
+  - "Uso da biblioteca oficial de Flatbuffers para Go."
+  - "Arquitetura Hexagonal no /backend."
+
+success_criteria:
+  - "Conseguir enviar uma requisição REST com payload binário gerado a partir de um JSON e um schema .fbs carregado dinamicamente."
+  - "As mensagens recebidas via WebSocket devem ser decodificadas corretamente conforme o schema."
+  - "Trocar o ambiente e ver os valores substituídos no envio da requisição."
+  - "Variáveis de ambiente funcionando tanto na URL quanto no corpo JSON."

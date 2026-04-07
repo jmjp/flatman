@@ -1,0 +1,41 @@
+{
+  "name": "Vortx Backend API",
+  "requests": [
+    {
+      "id": "health-check",
+      "name": "1. Health Check",
+      "url": "{{baseUrl}}/v1/health",
+      "method": "GET",
+      "schema": "test_fix.fbs",
+      "rootType": "User"
+    },
+    {
+      "id": "discord-login",
+      "name": "2. Discord Login",
+      "url": "{{baseUrl}}/v1/auth/discord/login",
+      "method": "GET",
+      "schema": "test_fix.fbs",
+      "rootType": "User"
+    },
+    {
+      "id": "magic-link",
+      "name": "3. Magic Link",
+      "url": "{{baseUrl}}/v1/auth/magic-link?email=user@example.com",
+      "method": "POST",
+      "schema": "test_fix.fbs",
+      "rootType": "User"
+    },
+    {
+      "id": "get-me",
+      "name": "4. Get My Profile",
+      "url": "{{baseUrl}}/v1/user/me",
+      "method": "GET",
+      "schema": "test_fix.fbs",
+       "rootType": "User",
+      "headers": {
+        "Cookie": "session_id={{sessionId}}",
+        "Accept": "application/x-flatbuffers"
+      }
+    }
+  ]
+}

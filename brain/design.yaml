@@ -1,0 +1,48 @@
+name: "Flatman Design System"
+version: "1.0.0"
+
+theme:
+  colors:
+    background-primary: "#0D1117"    # Dark obsidian
+    background-secondary: "#161B22"  # Slightly lighter for panels
+    surface: "#21262D"               # For cards and inputs
+    accent: "#7C4DFF"               # Electric Purple
+    text-primary: "#C9D1D9"          # Soft white
+    text-muted: "#8B949E"           # Grayish
+    success: "#238636"
+    error: "#F85149"
+    warning: "#D29922"
+
+  typography:
+    sans: "Inter, system-ui, sans-serif"
+    mono: "Fira Code, JetBrains Mono, monospace"
+
+layout:
+  navigation:
+    position: "left"
+    width: "280px"
+    items: ["History", "Collections", "Schemas"]
+  
+  workspace:
+    tabs: ["REST", "WebSockets"]
+    request-section:
+      - "URL Input + Method Selector"
+      - "Headers Editor"
+      - "Body (JSON Editor with Schema Validation)"
+    response-section:
+      - "Status / Time / Size"
+      - "Decoded JSON View"
+      - "Raw Binary Hex Viewer"
+
+animations:
+  transitions: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+  hover-elevation: "shadow-lg scale-[1.02]"
+
+components:
+  input:
+    variant: "glassmorphic"
+    border-radius: "8px"
+  button:
+    weight: "bold"
+    text-transform: "uppercase"
+    letter-spacing: "0.5px"
