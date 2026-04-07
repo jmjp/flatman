@@ -50,8 +50,8 @@ func (a *App) SelectDirectory() (string, error) {
 }
 
 // ExecuteBinaryRequest envia um JSON que será serializado para Flatbuffers via Wails com Headers
-func (a *App) ExecuteBinaryRequest(schemaPath, url, method, jsonPayload string, headers map[string]string) (string, error) {
-	resp, err := a.service.ExecuteRequest(a.ctx, schemaPath, url, method, jsonPayload, headers)
+func (a *App) ExecuteBinaryRequest(schemaPath, url, method, jsonPayload string, headers map[string]string, maxRetries int, delayMs int) (string, error) {
+	resp, err := a.service.ExecuteRequest(a.ctx, schemaPath, url, method, jsonPayload, headers, maxRetries, delayMs)
 	if err != nil {
 		return "", err
 	}

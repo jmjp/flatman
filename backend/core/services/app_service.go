@@ -2,11 +2,12 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"flatman/backend/core/domain"
 	"flatman/backend/core/ports"
 	"fmt"
 	"os"
-	"encoding/json"
+	"time"
 )
 
 // AppService é a fachada principal do backend para o Wails
@@ -49,8 +50,8 @@ func (s *AppService) LoadSchemas(ctx context.Context, dirPath string) (*domain.L
 	return result, nil
 }
 
-// ExecuteRequest executa uma requisição REST com Flatbuffers e Headers customizados
-func (s *AppService) ExecuteRequest(ctx context.Context, schemaPath string, url string, method string, jsonPayload string, headers map[string]string) (*ports.HTTPResponse, error) {
+// ExecuteRequest executa uma requisição REST com Flatbuffers e Headers customizados, incluindo suporte a retry.
+func (s *AppService) ExecuteRequest(ctx context.Context, schemaPath string, url string, method string, jsonPayload string, headers map[string]string, maxRetries int, delayMs int) (*ports.HTTPResponse, error) {
 	// 1. Converte JSON para Binário
 	bin, err := s.converter.JSONToBinary(schemaPath, jsonPayload)
 	if err != nil {
@@ -66,7 +67,7 @@ func (s *AppService) ExecuteRequest(ctx context.Context, schemaPath string, url 
 		reqHeaders[k] = v
 	}
 
-	// 3. Envia requisição
+	// 3. Envia requisição (com retry)
 	req := &ports.HTTPRequest{
 		Method:  method,
 		URL:     url,
@@ -74,11 +75,36 @@ func (s *AppService) ExecuteRequest(ctx context.Context, schemaPath string, url 
 		Headers: reqHeaders,
 	}
 
-	resp, err := s.httpClient.Do(ctx, req)
-	if err != nil {
-		return nil, fmt.Errorf("http error: %w", err)
+	var resp *ports.HTTPResponse
+	var reqErr error
+
+	if maxRetries < 0 {
+		maxRetries = 0
 	}
 
+	for i := 0; i <= maxRetries; i++ {
+		resp, reqErr = s.httpClient.Do(ctx, req)
+
+		// Verifica se a requisição foi bem-sucedida
+		if reqErr == nil && resp.StatusCode >= 200 && resp.StatusCode < 400 {
+			return resp, nil // Sucesso, não precisa de retry
+		}
+
+		if i < maxRetries {
+			// Aguarda antes do próximo retry (respeitando o Contexto)
+			select {
+			case <-ctx.Done():
+				return nil, ctx.Err()
+			case <-time.After(time.Duration(delayMs) * time.Millisecond):
+			}
+		}
+	}
+
+	if reqErr != nil {
+		return nil, fmt.Errorf("http error after %d retries: %w", maxRetries, reqErr)
+	}
+
+	// Retorna a última resposta (com falha), caso reqErr seja nulo mas StatusCode > 400
 	return resp, nil
 }
 

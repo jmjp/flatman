@@ -6,7 +6,7 @@ export function ConnectWS(arg1:string,arg2:Record<string, string>):Promise<void>
 
 export function DisconnectWS():Promise<void>;
 
-export function ExecuteBinaryRequest(arg1:string,arg2:string,arg3:string,arg4:string,arg5:Record<string, string>):Promise<string>;
+export function ExecuteBinaryRequest(arg1:string,arg2:string,arg3:string,arg4:string,arg5:Record<string, string>,arg6:number,arg7:number):Promise<string>;
 
 export function LoadSchemasFromDir(arg1:string):Promise<domain.LoadResult>;
 

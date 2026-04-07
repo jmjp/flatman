@@ -1,5 +1,22 @@
 export namespace domain {
 	
+	export class RetryPolicy {
+	    enabled: boolean;
+	    maxRetries: number;
+	    delayMs: number;
+
+	    static createFrom(source: any = {}) {
+	        return new RetryPolicy(source);
+	    }
+
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.enabled = source["enabled"];
+	        this.maxRetries = source["maxRetries"];
+	        this.delayMs = source["delayMs"];
+	    }
+	}
+
 	export class SavedRequest {
 	    id: string;
 	    name: string;
@@ -9,6 +26,7 @@ export namespace domain {
 	    rootType: string;
 	    headers: Record<string, string>;
 	    payload: string;
+	    retryPolicy?: RetryPolicy;
 	
 	    static createFrom(source: any = {}) {
 	        return new SavedRequest(source);
@@ -24,7 +42,26 @@ export namespace domain {
 	        this.rootType = source["rootType"];
 	        this.headers = source["headers"];
 	        this.payload = source["payload"];
+	        this.retryPolicy = this.convertValues(source["retryPolicy"], RetryPolicy);
 	    }
+
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class Collection {
 	    name: string;
